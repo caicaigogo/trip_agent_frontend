@@ -6,6 +6,16 @@
       <div class="circle circle-2"></div>
       <div class="circle circle-3"></div>
     </div>
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <div class="icon-wrapper">
+        <span class="icon">✈️</span>
+      </div>
+      <h1 class="page-title">智能旅行助手</h1>
+      <p class="page-subtitle">基于AI的个性化旅行规划,让每一次出行都完美无忧</p>
+    </div>
+
     <h1>Welcome to Vue with Ant Design Vue</h1>
 
     <div style="margin-bottom: 16px">
@@ -137,6 +147,62 @@ const handleSaveUser = () => {
   }
   50% {
     transform: translateY(-30px) rotate(180deg);
+  }
+}
+
+/* 页面标题 */
+.page-header {
+  text-align: center;
+  margin-bottom: 50px;
+  animation: fadeInDown 0.8s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.icon-wrapper {
+  margin-bottom: 20px;
+}
+
+.icon {
+  font-size: 80px;
+  display: inline-block;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.page-title {
+  font-size: 56px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 16px;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+.page-subtitle {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+  font-weight: 300;
+}
+
+/* 动画 */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
