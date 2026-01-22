@@ -16,6 +16,26 @@
       <p class="page-subtitle">基于AI的个性化旅行规划,让每一次出行都完美无忧</p>
     </div>
 
+    <a-card class="form-card" :bordered="false">
+      <a-form
+        :model="formData"
+        layout="vertical"
+        @finish="handleSubmit"
+      >
+        <a-form-item
+          label="用户名"
+          name="username"
+          :rules="[{ required: true, message: '请输入用户名' }]"
+        >
+          <a-input v-model:value="formData.username" />
+        </a-form-item>
+
+        <a-form-item>
+          <a-button type="primary" html-type="submit">提交</a-button>
+        </a-form-item>
+      </a-form>
+    </a-card>
+
     <h1>Welcome to Vue with Ant Design Vue</h1>
 
     <div style="margin-bottom: 16px">
@@ -49,6 +69,16 @@
 import { ref, onMounted } from 'vue';
 import { message } from 'ant-design-vue';
 import { fetchUsers, createUser } from '@/api/user';
+
+import { reactive } from 'vue';
+
+const formData = reactive({
+  username: ''
+});
+
+const handleSubmit = (values) => {
+  console.log('提交:', values);
+};
 
 const users = ref([]);
 const name = ref('');
@@ -194,11 +224,35 @@ const handleSaveUser = () => {
   font-weight: 300;
 }
 
+/* 表单卡片 */
+.form-card {
+  max-width: 1400px;
+  margin: 0 auto;
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+  animation: fadeInUp 0.8s ease-out;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.98) !important;
+}
+
 /* 动画 */
 @keyframes fadeInDown {
   from {
     opacity: 0;
     transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
