@@ -206,7 +206,7 @@
 import { ref, reactive, watch } from 'vue'
 import { message } from 'ant-design-vue';
 import type { Dayjs } from 'dayjs'
-
+import { generateTripPlan } from '@/services/api'
 
 const loading = ref(false)
 const loadingProgress = ref(0)
@@ -280,6 +280,7 @@ const handleSubmit = async () => {
     }
 
     console.log('提交:', requestData);
+    const response = await generateTripPlan(requestData)
 
     clearInterval(progressInterval)
     loadingProgress.value = 100

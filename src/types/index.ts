@@ -8,3 +8,16 @@ export interface TripFormData {
   preferences: string[]
   free_text_input: string
 }
+
+export interface User {
+  name: string
+  id: number
+  email: string
+}
+
+
+export interface TripPlanResponse {
+  success: boolean
+  message: string
+  data?: User[]
+}
