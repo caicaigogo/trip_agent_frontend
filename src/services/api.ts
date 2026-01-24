@@ -40,7 +40,7 @@ apiClient.interceptors.response.use(
 export async function generateTripPlan(formData: TripFormData): Promise<TripPlanResponse> {
   try {
     console.log(formData)
-    const response = await apiClient.get<TripPlanResponse>('/users')
+    const response = await apiClient.get('/users')
     return response.data
   } catch (error: any) {
     console.error('生成旅行计划失败:', error)

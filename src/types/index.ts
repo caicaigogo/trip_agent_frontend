@@ -17,7 +17,5 @@ export interface User {
 
 
 export interface TripPlanResponse {
-  success: boolean
-  message: string
   data?: User[]
 }

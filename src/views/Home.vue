@@ -204,10 +204,13 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue';
-import type { Dayjs } from 'dayjs'
 import { generateTripPlan } from '@/services/api'
+import type { TripFormData } from '@/types'
+import type { Dayjs } from 'dayjs'
 
+const router = useRouter()
 const loading = ref(false)
 const loadingProgress = ref(0)
 const loadingStatus = ref('')
@@ -285,6 +288,20 @@ const handleSubmit = async () => {
     clearInterval(progressInterval)
     loadingProgress.value = 100
     loadingStatus.value = '✅ 完成!'
+
+    if (response) {
+      // 保存到sessionStorage
+      sessionStorage.setItem('tripPlan', JSON.stringify(response))
+
+      message.success('旅行计划生成成功!')
+
+      // 短暂延迟后跳转
+      setTimeout(() => {
+        router.push('/result')
+      }, 500)
+    } else {
+      message.error(response.message || '生成失败')
+    }
 
   } catch (error: any) {
     clearInterval(progressInterval)
