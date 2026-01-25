@@ -15,7 +15,14 @@ export interface User {
   email: string
 }
 
+export interface User {
+  name: string
+  id: number
+  email: string
+}
 
 export interface TripPlanResponse {
+  success: boolean
+  message: string
   data?: User[]
 }

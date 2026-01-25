@@ -289,9 +289,9 @@ const handleSubmit = async () => {
     loadingProgress.value = 100
     loadingStatus.value = '✅ 完成!'
 
-    if (response) {
+    if (response.success && response.data) {
       // 保存到sessionStorage
-      sessionStorage.setItem('tripPlan', JSON.stringify(response))
+      sessionStorage.setItem('tripPlan', JSON.stringify(response.data))
 
       message.success('旅行计划生成成功!')
 
@@ -302,7 +302,6 @@ const handleSubmit = async () => {
     } else {
       message.error(response.message || '生成失败')
     }
-
   } catch (error: any) {
     clearInterval(progressInterval)
     message.error(error.message || '生成旅行计划失败,请稍后重试')
