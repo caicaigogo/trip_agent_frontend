@@ -1,5 +1,16 @@
 export interface Attraction {
   name: string
+  address: string
+  visit_duration: number
+  description: string
+  rating?: number
+  ticket_price?: number
+}
+
+export interface Meal {
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack'
+  name: string
+  description?: string
 }
 
 export interface Budget {
@@ -10,13 +21,24 @@ export interface Budget {
   total: number
 }
 
+export interface Hotel {
+  name: string
+  address: string
+  price_range: string
+  rating: string
+  distance: string
+  type: string
+}
+
 export interface DayPlan {
   date: string
   day_index: number
   description: string
   transportation: string
   accommodation: string
+  hotel?: Hotel
   attractions: Attraction[]
+  meals: Meal[]
 }
 
 export interface TripPlan {
@@ -32,6 +54,12 @@ export interface TripPlan {
 
 export interface WeatherInfo {
   date: string
+  day_weather: string
+  night_weather: string
+  day_temp: number
+  night_temp: number
+  wind_direction: string
+  wind_power: string
 }
 
 export interface TripFormData {

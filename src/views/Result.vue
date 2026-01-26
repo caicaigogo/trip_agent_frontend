@@ -178,15 +178,126 @@
                           </a-button>
                         </a-space>
                       </template>
+                      <!-- 景点图片 -->
+                      <div class="attraction-image-wrapper">
+                        <img
+                          :src="getAttractionImage(item.name, index)"
+                          :alt="item.name"
+                          class="attraction-image"
+                          @error="handleImageError"
+                        />
+                        <div class="attraction-badge">
+                          <span class="badge-number">{{ index + 1 }}</span>
+                        </div>
+                        <div v-if="item.ticket_price" class="price-tag">
+                          ¥{{ item.ticket_price }}
+                        </div>
+                      </div>
+
+                      <!-- 编辑模式下可编辑的字段 -->
+                      <div v-if="editMode">
+                        <p><strong>地址:</strong></p>
+                        <a-input v-model:value="item.address" size="small" style="margin-bottom: 8px" />
+
+                        <p><strong>游览时长(分钟):</strong></p>
+                        <a-input-number v-model:value="item.visit_duration" :min="10" :max="480" size="small" style="width: 100%; margin-bottom: 8px" />
+
+                        <p><strong>描述:</strong></p>
+                        <a-textarea v-model:value="item.description" :rows="2" size="small" style="margin-bottom: 8px" />
+                      </div>
+
+                      <!-- 查看模式 -->
+                      <div v-else>
+                        <p><strong>地址:</strong> {{ item.address }}</p>
+                        <p><strong>游览时长:</strong> {{ item.visit_duration }}分钟</p>
+                        <p><strong>描述:</strong> {{ item.description }}</p>
+                        <p v-if="item.rating"><strong>评分:</strong> {{ item.rating }}⭐</p>
+                      </div>
                     </a-card>
                   </a-list-item>
                 </template>
               </a-list>
+
+              <!-- 酒店推荐 -->
+              <a-divider v-if="day.hotel" orientation="left">🏨 住宿推荐</a-divider>
+              <a-card v-if="day.hotel" size="small" class="hotel-card">
+                <template #title>
+                  <span class="hotel-title">{{ day.hotel.name }}</span>
+                </template>
+                <a-descriptions :column="2" size="small">
+                  <a-descriptions-item label="地址">{{ day.hotel.address }}</a-descriptions-item>
+                  <a-descriptions-item label="类型">{{ day.hotel.type }}</a-descriptions-item>
+                  <a-descriptions-item label="价格范围">{{ day.hotel.price_range }}</a-descriptions-item>
+                  <a-descriptions-item label="评分">{{ day.hotel.rating }}⭐</a-descriptions-item>
+                  <a-descriptions-item label="距离" :span="2">{{ day.hotel.distance }}</a-descriptions-item>
+                </a-descriptions>
+              </a-card>
+
+              <!-- 餐饮安排 -->
+              <a-divider orientation="left">🍽️ 餐饮安排</a-divider>
+              <a-descriptions :column="1" bordered size="small">
+                <a-descriptions-item
+                  v-for="meal in day.meals"
+                  :key="meal.type"
+                  :label="getMealLabel(meal.type)"
+                >
+                  {{ meal.name }}
+                  <span v-if="meal.description"> - {{ meal.description }}</span>
+                </a-descriptions-item>
+              </a-descriptions>
             </a-collapse-panel>
           </a-collapse>
         </a-card>
+
+        <a-card id="weather" v-if="tripPlan.weather_info && tripPlan.weather_info.length > 0" title="天气信息" style="margin-top: 20px" :bordered="false">
+        <a-list
+          :data-source="tripPlan.weather_info"
+          :grid="{ gutter: 16, column: 3 }"
+        >
+          <template #renderItem="{ item }">
+            <a-list-item>
+              <a-card size="small" class="weather-card">
+                <div class="weather-date">{{ item.date }}</div>
+                <div class="weather-info-row">
+                  <span class="weather-icon">☀️</span>
+                  <div>
+                    <div class="weather-label">白天</div>
+                    <div class="weather-value">{{ item.day_weather }} {{ item.day_temp }}°C</div>
+                  </div>
+                </div>
+                <div class="weather-info-row">
+                  <span class="weather-icon">🌙</span>
+                  <div>
+                    <div class="weather-label">夜间</div>
+                    <div class="weather-value">{{ item.night_weather }} {{ item.night_temp }}°C</div>
+                  </div>
+                </div>
+                <div class="weather-wind">
+                  💨 {{ item.wind_direction }} {{ item.wind_power }}
+                </div>
+              </a-card>
+            </a-list-item>
+          </template>
+        </a-list>
+        </a-card>
       </div>
     </div>
+    <a-empty v-else description="没有找到旅行计划数据">
+      <template #image>
+        <div style="font-size: 80px;">🗺️</div>
+      </template>
+      <template #description>
+        <span style="color: #999;">暂无旅行计划数据,请先创建行程</span>
+      </template>
+      <a-button type="primary" @click="goBack">返回首页创建行程</a-button>
+    </a-empty>
+
+    <!-- 回到顶部按钮 -->
+    <a-back-top :visibility-height="300">
+      <div class="back-top-button">
+        ↑
+      </div>
+    </a-back-top>
   </div>
 </template>
 
@@ -261,6 +372,26 @@ const moveAttraction = (dayIndex: number, attrIndex: number, direction: 'up' | '
   message.info('direction')
 }
 
+const getMealLabel = (type: string): string => {
+  const labels: Record<string, string> = {
+    breakfast: '早餐',
+    lunch: '午餐',
+    dinner: '晚餐',
+    snack: '小吃'
+  }
+  return labels[type] || type
+}
+
+// 获取景点图片
+const getAttractionImage = (name: string, index: number): string => {
+}
+
+// 图片加载失败时的处理
+const handleImageError = (event: Event) => {
+  message.info('handleImageError')
+
+}
+
 // 导出为图片
 const exportAsImage = async () => {
   message.info('exportAsImage')
@@ -331,6 +462,109 @@ const exportAsPDF = async () => {
 .main-content {
   flex: 1;
   min-width: 0;
+}
+
+/* 景点图片样式 */
+.attraction-image-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.attraction-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.attraction-image-wrapper:hover .attraction-image {
+  transform: scale(1.05);
+}
+
+.attraction-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.badge-number {
+  font-size: 18px;
+}
+
+.price-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 77, 79, 0.9);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 天气卡片样式 */
+.weather-card {
+  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  border: none !important;
+  transition: all 0.3s ease;
+}
+
+.weather-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.weather-date {
+  font-size: 16px;
+  font-weight: bold;
+  color: #00796b;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.weather-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.weather-icon {
+  font-size: 24px;
+}
+
+.weather-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.weather-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #00796b;
+}
+
+.weather-wind {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 121, 107, 0.2);
+  text-align: center;
+  color: #00796b;
+  font-size: 14px;
 }
 
 /* 顶部信息区布局 */
@@ -493,6 +727,43 @@ const exportAsPDF = async () => {
 .info-row .value {
   color: #333;
   flex: 1;
+}
+
+/* 回到顶部按钮 */
+.back-top-button {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-top-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* 酒店卡片样式 */
+.hotel-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: none !important;
+}
+
+.hotel-card :deep(.ant-card-head) {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+}
+
+.hotel-title {
+  color: white !important;
+  font-weight: 600;
 }
 
 /* 卡片样式优化 */
